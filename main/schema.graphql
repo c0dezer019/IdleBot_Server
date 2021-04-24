@@ -1,0 +1,33 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+scalar DateTime
+
+type Member {
+    id: ID!
+    member_id: Int!
+    username: String!
+    nickname: String
+    last_activity: String
+    last_activty_loc: String
+    last_activity_ts: DateTime
+    status: String!
+    date_added: DateTime
+}
+
+type Guild {
+    id: ID!
+    guild_id: Int!
+    name: String!
+    last_activity: String
+    last_activity_ts: String
+    status: String!
+    members: [Member]
+    date_added: DateTime
+}
+
+type Query {}
+
+type Mutation {}
