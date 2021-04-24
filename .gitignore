@@ -4,3 +4,4 @@
 .pytest_cache
 tests/dbsetup.py
 test.py
+*__pycache__
