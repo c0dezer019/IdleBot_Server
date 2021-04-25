@@ -4,6 +4,42 @@ from main.models import db
 from main.models import Guild
 
 
+def resolve_guilds(obj, info):
+    try:
+        guilds = [guild.as_dict() for guild in Guild.query.all()]
+
+        payload = {
+            'success': True,
+            'guilds': guilds
+        }
+
+    except Exception as error:
+        payload = {
+            'success': False,
+            'errors': str(error)
+        }
+
+    return payload
+
+
+def resolve_guild(obj, info, guild_id):
+    try:
+        guild = Guild.query.filter_by(guild_id = guild_id).first()
+
+        payload = {
+            'success': True,
+            'guild': guild.as_dict(),
+        }
+
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Guild matching id {guild_id} cannot be found.']
+        }
+
+    return payload
+
+
 # *      * #
 #  Create  #
 # *      * #
@@ -35,16 +71,12 @@ def get_all_guilds():
 
 
 def get_guild(guild_id):
-    guild = Guild.query.filter_by(guild_id = guild_id).first()
+    try:
+        guild = Guild.query.filter_by(guild_id = guild_id).first()
 
-    if guild:
-        guild_dict = guild.as_dict()
+        return jsonify(guild.as_dict())
 
-        if guild_dict['last_activity_ts'] is not None:
-            guild_dict['last_activity_ts'] = guild_dict['last_activity_ts'].isoformat()
-
-        return jsonify(guild_dict)
-    else:
+    except AttributeError:
         return f'Guild with id {guild_id} not found.', 404
 
 
