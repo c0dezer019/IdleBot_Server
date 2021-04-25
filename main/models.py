@@ -41,12 +41,17 @@ class Member(db.Model):
     date_added = db.Column(db.DateTime(timezone = True), default = datetime.now(timezone('US/Central')))
 
     def __repr__(self):
-        return f'<Member(id = {self.id}, member_id = {self.member_id}, username = {self.username}, ' \
+        return f'<Member (id = {self.id}, member_id = {self.member_id}, username = {self.username}, ' \
                f' last_activity = {self.last_activity}, last_activity_loc = {self.last_activity_loc}, ' \
-               f' last_activity_ts = {self.last_activity_ts}), status = {self.status}, date_added = {self.date_added}>'
+               f' last_activity_ts = {self.last_activity_ts.isoformat()}), status = {self.status}, ' \
+               f'date_added = {self.date_added.isoformat()}>'
 
     def as_dict(self):
-        return { c.name: getattr(self, c.name) for c in self.__table__.columns }
+        member_dict = { c.name: getattr(self, c.name) for c in self.__table__.columns }
+        member_dict['last_activity_ts'] = member_dict['last_activity_ts'].isoformat()
+        member_dict['date_added'] = member_dict['date_added'].isoformat()
+
+        return member_dict
 
     def update(self, new_timestamp):
         self.last_activity_ts = new_timestamp
@@ -59,6 +64,7 @@ class Guild(db.Model):
     guild_id = db.Column(db.BigInteger, nullable = False, unique = True)
     name = db.Column(db.String, nullable = False)
     last_activity = db.Column(db.String, server_default = 'None')
+    last_activity_loc = db.Column(db.String, server_default = 'None')
     last_activity_ts = db.Column(db.DateTime(timezone = True))
     status = db.Column(db.String, nullable = False, server_default = 'new')
     settings = db.Column(db.JSON, default = { })
@@ -67,8 +73,15 @@ class Guild(db.Model):
     date_added = db.Column(db.DateTime(timezone = True), default = datetime.now(timezone('US/Central')))
 
     def __repr__(self):
-        return f'<Guild(id = {self.id}, name = {self.name}, last_activity = {self.last_activity},' \
-               f' last_activity_ts = {self.last_activity_ts})>'
+        return f'<Guild (id = {self.id}, guild_id = {self.guild_id},  name = {self.name}, ' \
+               f'last_activity = {self.last_activity}, last_activity_loc = {self.last_activity_loc}, ' \
+               f'last_activity_ts = {self.last_activity_ts}, status = {self.status}, settings = {self.settings}, ' \
+               f'date_added = {self.date_added.isoformat()})>'
 
     def as_dict(self):
-        return { c.name: getattr(self, c.name) for c in self.__table__.columns }
+        guild_dict = { c.name: getattr(self, c.name) for c in self.__table__.columns }
+        guild_dict['last_activity_ts'] = guild_dict['last_activity_ts'].isoformat()
+        guild_dict['date_added'] = guild_dict['date_added'].isoformat()
+        print(guild_dict)
+
+        return guild_dict
