@@ -1,9 +1,55 @@
-from flask import Blueprint, request
-from crud.member_crud import add_member, get_member, get_all_members, update_member, remove_member
-from crud.guild_crud import add_guild, get_guild, get_all_guilds, update_guild, remove_guild
-
+from ariadne import load_schema_from_path, make_executable_schema, graphql_sync, snake_case_fallback_resolvers, \
+    ObjectType
+from ariadne.constants import PLAYGROUND_HTML
+from crud.member_crud import add_member, get_member, get_all_members, update_member, remove_member, resolve_members, \
+    resolve_member
+from crud.guild_crud import add_guild, get_guild, get_all_guilds, update_guild, remove_guild, resolve_guilds, \
+    resolve_guild
+from flask import Blueprint, jsonify, request
 
 bot = Blueprint('bot', __name__, url_prefix = '/bot')
+type_defs = load_schema_from_path('main/schema.graphql')
+query = ObjectType("Query")
+query.set_field("members", resolve_members)
+query.set_field('member', resolve_member)
+query.set_field('guilds', resolve_guilds)
+query.set_field('guild', resolve_guild)
+schema = make_executable_schema(type_defs, query, snake_case_fallback_resolvers)
+
+
+@bot.route('/api', methods=['GET'])
+def playground():
+    return PLAYGROUND_HTML, 200
+
+
+@bot.route('/api', methods=['POST'])
+def server():
+    data = request.get_json()
+
+    success, result = graphql_sync(
+        schema,
+        data,
+        context_value = request,
+    )
+
+    status_code = 200 if success else 400
+
+    return jsonify(result), status_code
+
+
+@bot.route('/api/postman', methods=['GET', 'POST'])
+def postman():
+    data = request.get_json()
+
+    success, result = graphql_sync(
+        schema,
+        data,
+        context_value = request,
+    )
+
+    status_code = 200 if success else 400
+
+    return jsonify(result), status_code
 
 
 @bot.route('/members', methods = ['GET'])
