@@ -3,11 +3,13 @@ schema {
     mutation: Mutation
 }
 
+scalar BigInt
 scalar DateTime
+scalar Dict
 
 type Member {
     id: ID!
-    member_id: Int!
+    member_id: BigInt!
     username: String!
     nickname: String
     last_activity: String
@@ -31,12 +33,14 @@ type MembersResult {
 
 type Guild {
     id: ID!
-    guild_id: Int!
+    guild_id: BigInt!
     name: String!
     last_activity: String
+    last_activity_loc: String
     last_activity_ts: String
     status: String
-    members: [Member]
+    settings: Dict
+    members: [MemberResult]
     date_added: DateTime
 }
 
@@ -54,7 +58,9 @@ type GuildsResult {
 
 type Query {
     members: MembersResult!
-    member(memberId: Int!): MemberResult!
+    member(member_id: BigInt!): MemberResult
+    guilds: GuildsResult!
+    guild(guild_id: BigInt!): GuildResult
 }
 
 type DeleteResult {
@@ -63,10 +69,10 @@ type DeleteResult {
 }
 
 type Mutation {
-    createGuild(guild_id: Int!, name: String!): GuildResult!
-    updateGuild(guild_id: Int!, last_activity: String, last_activity_ts: DateTime, status: String): GuildResult!
-    deleteGuild(guild_id: Int!): DeleteResult!
-    createMember(member_id: Int!, username: String!, nickname: String): MemberResult!
-    updateMember(member_id: Int!, nickname: String, last_activity: String, last_activity_loc: String, last_activity_ts: DateTime): MemberResult!
-    deleteMember(member_id: Int!): DeleteResult!
+    createGuild(guild_id: BigInt!, name: String!): GuildResult!
+    updateGuild(guild_id: BigInt!, last_activity: String, last_activity_ts: DateTime, status: String): GuildResult!
+    deleteGuild(guild_id: BigInt!): DeleteResult!
+    createMember(member_id: BigInt!, username: String!, nickname: String): MemberResult!
+    updateMember(member_id: BigInt!, nickname: String, last_activity: String, last_activity_loc: String, last_activity_ts: DateTime): MemberResult!
+    deleteMember(member_id: BigInt!): DeleteResult!
 }
