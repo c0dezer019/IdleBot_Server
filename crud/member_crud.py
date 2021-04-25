@@ -4,6 +4,42 @@ from main.models import db
 from main.models import Member, Guild
 
 
+def resolve_members(obj, info):
+    try:
+        members = [member.as_dict() for member in Member.query.all()]
+
+        payload = {
+            'success': True,
+            'members': members
+        }
+
+    except Exception as error:
+        payload = {
+            'success': False,
+            'errors': [str(error)]
+        }
+
+    return payload
+
+
+def resolve_member(obj, info, member_id):
+    try:
+        member = Member.query.filter_by(member_id = member_id).first()
+
+        payload = {
+            'success': True,
+            'member': member.as_dict(),
+        }
+
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Member matching id {member_id} cannot found.'],
+        }
+
+    return payload
+
+
 def get_all_members():
     all_members = Member.query.all()
     results = [member.as_dict() for member in all_members]
