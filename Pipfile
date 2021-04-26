@@ -9,11 +9,11 @@ flask-sqlalchemy = "*"
 sqlalchemy = "*"
 requests = "*"
 python-dotenv = "*"
-pytz = "*"
 psycopg2-binary = "*"
 wheel = "*"
 pytest = "*"
 ariadne = "*"
+moment = "*"
 
 [dev-packages]
 flask-testing = "*"
