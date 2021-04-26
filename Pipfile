@@ -13,7 +13,8 @@ psycopg2-binary = "*"
 wheel = "*"
 pytest = "*"
 ariadne = "*"
-moment = "*"
+pytz = "*"
+arrow = "*"
 
 [dev-packages]
 flask-testing = "*"
