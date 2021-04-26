@@ -1,20 +1,30 @@
 from ariadne import load_schema_from_path, make_executable_schema, graphql_sync, snake_case_fallback_resolvers, \
     ObjectType
 from ariadne.constants import PLAYGROUND_HTML
-from crud.member_crud import add_member, get_member, get_all_members, update_member, remove_member, resolve_members, \
-    resolve_member
-from crud.guild_crud import add_guild, get_guild, get_all_guilds, update_guild, remove_guild, resolve_guilds, \
-    resolve_guild
+from crud.member_crud import resolve_create_member, resolve_members, resolve_member, resolve_update_member, \
+    resolve_delete_member
+from crud.guild_crud import resolve_create_guild, resolve_guild, resolve_guilds, resolve_update_guild, \
+    resolve_delete_guild
 from flask import Blueprint, jsonify, request
 
 bot = Blueprint('bot', __name__, url_prefix = '/bot')
 type_defs = load_schema_from_path('main/schema.graphql')
+
 query = ObjectType("Query")
 query.set_field("members", resolve_members)
 query.set_field('member', resolve_member)
 query.set_field('guilds', resolve_guilds)
 query.set_field('guild', resolve_guild)
-schema = make_executable_schema(type_defs, query, snake_case_fallback_resolvers)
+
+mutation = ObjectType("Mutation")
+mutation.set_field('createGuild', resolve_create_guild)
+mutation.set_field('updateGuild', resolve_update_guild)
+mutation.set_field('deleteGuild', resolve_delete_guild)
+mutation.set_field('createMember', resolve_create_member)
+mutation.set_field('updateMember', resolve_update_member)
+mutation.set_field('deleteMember', resolve_delete_member)
+
+schema = make_executable_schema(type_defs, query, mutation, snake_case_fallback_resolvers)
 
 
 @bot.route('/api', methods=['GET'])
@@ -22,7 +32,7 @@ def playground():
     return PLAYGROUND_HTML, 200
 
 
-@bot.route('/api', methods=['POST'])
+@bot.route('/api', methods=['POST', 'PATCH', 'DELETE'])
 def server():
     data = request.get_json()
 
@@ -37,7 +47,7 @@ def server():
     return jsonify(result), status_code
 
 
-@bot.route('/api/postman', methods=['GET', 'POST'])
+@bot.route('/api/postman', methods=['POST', 'GET', 'PATCH', 'DELETE'])
 def postman():
     data = request.get_json()
 

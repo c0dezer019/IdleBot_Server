@@ -65,7 +65,7 @@ class Guild(db.Model):
     name = db.Column(db.String, nullable = False)
     last_activity = db.Column(db.String, server_default = 'None')
     last_activity_loc = db.Column(db.String, server_default = 'None')
-    last_activity_ts = db.Column(db.DateTime(timezone = True))
+    last_activity_ts = db.Column(db.DateTime(timezone = True), default = datetime(1970, 1, 1, 0, 0))
     status = db.Column(db.String, nullable = False, server_default = 'new')
     settings = db.Column(db.JSON, default = { })
     members = db.relationship(Member, secondary = member_guild_association, lazy = 'subquery',
