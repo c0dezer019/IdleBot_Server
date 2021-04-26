@@ -1,6 +1,6 @@
+from arrow import get
 from main.models import db
 from main.models import Guild
-from moment import date
 
 
 def resolve_create_guild(obj, info, **kwargs):
@@ -66,7 +66,7 @@ def resolve_update_guild(obj, info, guild_id, **data):
 
         for k, v in data.items():
             if k == 'last_activity_ts':
-                v = date(v).timezone('US/Central').datetime
+                v = get(v).to('US/Central').datetime
 
             setattr(guild, k, v)
 

@@ -1,6 +1,6 @@
+from arrow import get
 from main.models import db
 from main.models import Member, Guild
-from moment import date
 
 
 def resolve_create_member(obj, info, guild_id, **data):
@@ -17,22 +17,22 @@ def resolve_create_member(obj, info, guild_id, **data):
             'member': member.as_dict(),
         }
 
-    except AttributeError:
+    except AttributeError as e:
         payload = {
             'success': False,
-            'errors': [f'Guild matching id {guild_id} could not be found.']
+            'errors': [f'Guild matching id {guild_id} could not be found.', f'{e}']
         }
 
-    except ValueError:
+    except ValueError as e:
         payload = {
             'success': False,
-            'errors': ['It\'s probably that you gave me bad data, or something. check to make sure you\'re passing me the correct data']
+            'errors': ['It\'s probably that you gave me bad data, or something. Maybe this will be helpful.', f'{e}']
         }
 
-    except Exception as error:
+    except Exception as e:
         payload = {
             'success': False,
-            'errors': [str(error)],
+            'errors': [str(e)],
         }
 
     return payload
@@ -47,10 +47,10 @@ def resolve_members(obj, info):
             'members': members
         }
 
-    except Exception as error:
+    except Exception as e:
         payload = {
             'success': False,
-            'errors': [str(error)]
+            'errors': [str(e)]
         }
 
     return payload
@@ -65,10 +65,10 @@ def resolve_member(obj, info, member_id):
             'member': member.as_dict(),
         }
 
-    except AttributeError:
+    except AttributeError as e:
         payload = {
             'success': False,
-            'errors': [f'Member matching id {member_id} could not be found.'],
+            'errors': [f'Member matching id {member_id} could not be found.', f'{e}'],
         }
 
     return payload
@@ -77,11 +77,10 @@ def resolve_member(obj, info, member_id):
 def resolve_update_member(obj, info, member_id, **data):
     try:
         member = Member.query.filter_by(member_id = member_id).first()
-        print(data)
 
         for k, v in data.items():
             if k == 'last_activity_ts':
-                v = date(v).timezone('US/Central').datetime
+                v = get(v).to('US/Central').datetime
 
             setattr(member, k, v)
 
@@ -93,16 +92,16 @@ def resolve_update_member(obj, info, member_id, **data):
             'member': member.as_dict(),
         }
 
-    except AttributeError:
+    except AttributeError as e:
         payload = {
             'success': False,
-            'errors': [f'Member matching id {member_id} could not be found.']
+            'errors': [f'Member matching id {member_id} could not be found.', f'{e}']
         }
 
-    except ValueError:
+    except ValueError as e:
         payload = {
             'success': False,
-            'errors': ['It\'s probably that you gave me bad data, or something. Check to make sure you\'re passing me the correct data']
+            'errors': ['It\'s probably that you gave me bad data, or something. Maybe this will be useful.', f'{e}']
         }
 
     except Exception as e:
@@ -126,10 +125,10 @@ def resolve_delete_member(obj, info, member_id):
             'success_msg': f'Member matching id {member_id} has successfully been deleted.',
         }
 
-    except AttributeError:
+    except AttributeError as e:
         payload = {
             'success': False,
-            'errors': [f'Member matching id {member_id} could not be found.']
+            'errors': [f'Member matching id {member_id} could not be found.', f'{e}']
         }
 
     return payload
