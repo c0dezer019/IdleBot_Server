@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from typing import Callable
-from pytz import timezone
+from arrow import get, now
 
 
 class PSQLAlchemy(SQLAlchemy):
@@ -35,10 +35,10 @@ class Member(db.Model):
     admin_access = db.Column(db.Boolean, default = False)
     last_activity = db.Column(db.String, server_default = 'None')
     last_activity_loc = db.Column(db.String, server_default = 'None')
-    last_activity_ts = db.Column(db.DateTime(timezone = True), default = datetime(1970, 1, 1, 0, 0))
+    last_activity_ts = db.Column(db.DateTime(timezone = True), default = get(datetime(1970, 1, 1, 0, 0)).datetime)
     # Overall Discord status. Not representative of individual servers.
     status = db.Column(db.String, nullable = False, server_default = 'new')
-    date_added = db.Column(db.DateTime(timezone = True), default = datetime.now(timezone('US/Central')))
+    date_added = db.Column(db.DateTime(timezone = True), default = now('US/Central').datetime)
 
     def __repr__(self):
         return f'<Member (id = {self.id}, member_id = {self.member_id}, username = {self.username}, ' \
@@ -65,12 +65,12 @@ class Guild(db.Model):
     name = db.Column(db.String, nullable = False)
     last_activity = db.Column(db.String, server_default = 'None')
     last_activity_loc = db.Column(db.String, server_default = 'None')
-    last_activity_ts = db.Column(db.DateTime(timezone = True), default = datetime(1970, 1, 1, 0, 0))
+    last_activity_ts = db.Column(db.DateTime(timezone = True), default = get(datetime(1970, 1, 1, 0, 0)).datetime)
     status = db.Column(db.String, nullable = False, server_default = 'new')
     settings = db.Column(db.JSON, default = { })
     members = db.relationship(Member, secondary = member_guild_association, lazy = 'subquery',
                               backref = db.backref('guilds', lazy = True))
-    date_added = db.Column(db.DateTime(timezone = True), default = datetime.now(timezone('US/Central')))
+    date_added = db.Column(db.DateTime(timezone = True), default = now('US/Central').datetime)
 
     def __repr__(self):
         return f'<Guild (id = {self.id}, guild_id = {self.guild_id},  name = {self.name}, ' \
