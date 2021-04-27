@@ -1,8 +1,8 @@
-from main import create_app
+from core import create_app
 from datetime import datetime
-from main.models import db
-from main.config import TestConfiguration
-from main.models import User, Server
+from core.models import db
+from core.config import TestConfiguration
+from core.models import User, Server
 import pytest
 
 
@@ -12,7 +12,7 @@ def app():
         f_app = create_app(config_class)
         f_app.test_request_context().push()
 
-        if config_class == 'main.config.TestConfiguration':
+        if config_class == 'core.config.TestConfiguration':
             db.drop_all()
 
         return f_app

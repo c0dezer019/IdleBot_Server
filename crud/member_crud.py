@@ -1,6 +1,6 @@
 from arrow import get
-from main.models import db
-from main.models import Member, Guild
+from core.models import db
+from core.models import Member, Guild
 
 
 def resolve_create_member(obj, info, guild_id, **data):

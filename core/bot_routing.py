@@ -8,7 +8,7 @@ from crud.guild_crud import resolve_create_guild, resolve_guild, resolve_guilds,
 from flask import Blueprint, jsonify, request
 
 bot = Blueprint('bot', __name__, url_prefix = '/bot')
-type_defs = load_schema_from_path('main/schema.graphql')
+type_defs = load_schema_from_path('core/schema.graphql')
 
 query = ObjectType("Query")
 query.set_field("members", resolve_members)
@@ -27,28 +27,13 @@ mutation.set_field('deleteMember', resolve_delete_member)
 schema = make_executable_schema(type_defs, query, mutation, snake_case_fallback_resolvers)
 
 
-@bot.route('/api', methods=['GET'])
+@bot.route('/graphql/playground', methods=['GET'])
 def playground():
     return PLAYGROUND_HTML, 200
 
 
-@bot.route('/api', methods=['POST', 'PATCH', 'DELETE'])
+@bot.route('/graphql', methods=['POST', 'GET', 'PATCH', 'DELETE'])
 def server():
-    data = request.get_json()
-
-    success, result = graphql_sync(
-        schema,
-        data,
-        context_value = request,
-    )
-
-    status_code = 200 if success else 400
-
-    return jsonify(result), status_code
-
-
-@bot.route('/api/postman', methods=['POST', 'GET', 'PATCH', 'DELETE'])
-def postman():
     data = request.get_json()
 
     success, result = graphql_sync(

@@ -13,7 +13,7 @@ type Member {
     username: String!
     nickname: String
     last_activity: String
-    last_activty_loc: String
+    last_activity_loc: String
     last_activity_ts: DateTime
     status: String
     date_added: DateTime

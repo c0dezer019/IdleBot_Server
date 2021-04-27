@@ -1,6 +1,6 @@
 from arrow import get
-from main.models import db
-from main.models import Guild
+from core.models import db
+from core.models import Guild
 
 
 def resolve_create_guild(obj, info, **kwargs):
@@ -55,6 +55,12 @@ def resolve_guild(obj, info, guild_id):
         payload = {
             'success': False,
             'errors': [f'Guild matching id {guild_id} cannot be found.']
+        }
+
+    except ValueError:
+        payload = {
+            'success': False,
+            'errors': [f'You stuck up, half-witted, scruffy-looking nerf herder! You provided me with incorrect data!']
         }
 
     return payload

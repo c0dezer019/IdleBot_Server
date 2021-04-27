@@ -11,13 +11,13 @@ def create_app():
     flask_app = Flask(__name__, instance_relative_config = True)
 
     if not os.getenv('MODE'):
-        flask_app.config.from_object('main.config.ProductionConfiguration')
+        flask_app.config.from_object('core.config.ProductionConfiguration')
     elif os.getenv('MODE') == 'testing':
-        flask_app.config.from_object('main.config.TestConfiguration')
+        flask_app.config.from_object('core.config.TestConfiguration')
     elif os.getenv('MODE') == 'development':
-        flask_app.config.from_object('main.config.BaseConfiguration')
+        flask_app.config.from_object('core.config.BaseConfiguration')
 
-    from main.models import db
+    from core.models import db
     db.init_app(flask_app)
 
     try:
@@ -25,7 +25,7 @@ def create_app():
     except OSError:
         pass
 
-    from main.bot_routing import bot
+    from core.bot_routing import bot
     flask_app.register_blueprint(bot)
 
     return flask_app
