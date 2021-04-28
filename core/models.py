@@ -68,7 +68,7 @@ class Guild(db.Model):
     last_activity_ts = db.Column(db.DateTime(timezone = True), default = get(datetime(1970, 1, 1, 0, 0)).datetime)
     status = db.Column(db.String, nullable = False, server_default = 'new')
     settings = db.Column(db.JSON, default = { })
-    members = db.relationship(Member, secondary = member_guild_association, lazy = 'subquery',
+    members = db.relationship(Member, secondary = member_guild_association, lazy = 'joined',
                               backref = db.backref('guilds', lazy = True))
     date_added = db.Column(db.DateTime(timezone = True), default = now('US/Central').datetime)
 
@@ -76,12 +76,16 @@ class Guild(db.Model):
         return f'<Guild (id = {self.id}, guild_id = {self.guild_id},  name = {self.name}, ' \
                f'last_activity = {self.last_activity}, last_activity_loc = {self.last_activity_loc}, ' \
                f'last_activity_ts = {self.last_activity_ts}, status = {self.status}, settings = {self.settings}, ' \
-               f'date_added = {self.date_added.isoformat()})>'
+               f'members = {self.members}, date_added = {self.date_added.isoformat()})>'
 
     def as_dict(self):
         guild_dict = { c.name: getattr(self, c.name) for c in self.__table__.columns }
         guild_dict['last_activity_ts'] = guild_dict['last_activity_ts'].isoformat()
         guild_dict['date_added'] = guild_dict['date_added'].isoformat()
-        print(guild_dict)
+        guild_dict['members'] = []
+
+        for member in self.members:
+            member_dict = member.as_dict()
+            guild_dict['members'].append(member_dict)
 
         return guild_dict
