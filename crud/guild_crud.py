@@ -29,10 +29,16 @@ def resolve_guilds(obj, info):
     try:
         guilds = [guild.as_dict() for guild in Guild.query.all()]
 
-        payload = {
-            'code': 200,
-            'guilds': guilds
-        }
+        if guilds:
+            payload = {
+                'code': 200,
+                'guilds': guilds
+            }
+        else:
+            payload = {
+                'code': 404,
+                'errors': ['No guilds could be found.']
+            }
 
     except AttributeError as e:
         payload = {

@@ -42,10 +42,16 @@ def resolve_members(obj, info):
     try:
         members = [member.as_dict() for member in Member.query.all()]
 
-        payload = {
-            'code': 200,
-            'members': members
-        }
+        if members:
+            payload = {
+                'code': 200,
+                'members': members
+            }
+        else:
+            payload = {
+                'code': 404,
+                'errors': ['No members could be found.']
+            }
 
     except Exception as e:
         payload = {
