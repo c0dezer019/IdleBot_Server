@@ -20,14 +20,14 @@ type Member {
 }
 
 type MemberResult {
-    success: Boolean!
+    code: Int!
     success_msg: String
     errors: [String]
     member: Member
 }
 
 type MembersResult {
-    success: Boolean!
+    code: Int!
     errors: [String]
     members: [Member]
 }
@@ -41,19 +41,19 @@ type Guild {
     last_activity_ts: String
     status: String
     settings: Dict
-    members: [MemberResult]
+    members: [Member!]
     date_added: DateTime
 }
 
 type GuildResult {
-    success: Boolean!
+    code: Int!
     success_msg: String
     errors: [String]
     guild: Guild
 }
 
 type GuildsResult {
-    success: Boolean!
+    code: Int!
     errors: [String]
     guilds: [Guild]
 }
@@ -66,7 +66,7 @@ type Query {
 }
 
 type DeleteResult {
-    success: Boolean!
+    code: Int!
     success_msg: String
     errors: [String]
 }

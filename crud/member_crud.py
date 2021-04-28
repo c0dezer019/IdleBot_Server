@@ -13,25 +13,25 @@ def resolve_create_member(obj, info, guild_id, **data):
         db.session.commit()
 
         payload = {
-            'success': True,
+            'code': 200,
             'member': member.as_dict(),
         }
 
     except AttributeError as e:
         payload = {
-            'success': False,
+            'code': 404,
             'errors': [f'Guild matching id {guild_id} could not be found.', f'{e}']
         }
 
     except ValueError as e:
         payload = {
-            'success': False,
+            'code': 400,
             'errors': ['It\'s probably that you gave me bad data, or something. Maybe this will be helpful.', f'{e}']
         }
 
     except Exception as e:
         payload = {
-            'success': False,
+            'code': 500,
             'errors': [str(e)],
         }
 
@@ -43,13 +43,13 @@ def resolve_members(obj, info):
         members = [member.as_dict() for member in Member.query.all()]
 
         payload = {
-            'success': True,
+            'code': 200,
             'members': members
         }
 
     except Exception as e:
         payload = {
-            'success': False,
+            'code': 500,
             'errors': [str(e)]
         }
 
@@ -61,17 +61,17 @@ def resolve_member(obj, info, member_id):
         member = Member.query.filter_by(member_id = member_id).first()
 
         payload = {
-            'success': True,
+            'code': 200,
             'member': member.as_dict(),
         }
 
     except AttributeError as e:
         payload = {
-            'success': False,
+            'code': 404,
             'errors': [f'Member matching id {member_id} could not be found.', f'{e}'],
         }
 
-    return payload
+    return payload, 'member'
 
 
 def resolve_update_member(obj, info, member_id, **data):
@@ -88,25 +88,25 @@ def resolve_update_member(obj, info, member_id, **data):
         db.session.commit()
 
         payload = {
-            'success': True,
+            'code': 200,
             'member': member.as_dict(),
         }
 
     except AttributeError as e:
         payload = {
-            'success': False,
+            'code': 404,
             'errors': [f'Member matching id {member_id} could not be found.', f'{e}']
         }
 
     except ValueError as e:
         payload = {
-            'success': False,
+            'code': 400,
             'errors': ['It\'s probably that you gave me bad data, or something. Maybe this will be useful.', f'{e}']
         }
 
     except Exception as e:
         payload = {
-            'success': False,
+            'code': 500,
             'errors': [str(e)]
         }
 
@@ -121,13 +121,13 @@ def resolve_delete_member(obj, info, member_id):
         db.session.commit()
 
         payload = {
-            'success': True,
+            'code': 200,
             'success_msg': f'Member matching id {member_id} has successfully been deleted.',
         }
 
     except AttributeError as e:
         payload = {
-            'success': False,
+            'code': 404,
             'errors': [f'Member matching id {member_id} could not be found.', f'{e}']
         }
 

@@ -11,14 +11,15 @@ def resolve_create_guild(obj, info, **kwargs):
         db.session.commit()
 
         payload = {
-            'success': True,
+            'code': 200,
             'guild': guild.as_dict()
         }
 
-    except ValueError:
+    except ValueError as e:
         payload = {
-            'success': False,
-            'errors': [f'Incorrect']
+            'code': 400,
+            'errors': ['You stuck up, half-witted, scruffy-looking nerf herder! You provided me with incorrect data!',
+                       str(e)]
         }
 
     return payload
@@ -29,13 +30,19 @@ def resolve_guilds(obj, info):
         guilds = [guild.as_dict() for guild in Guild.query.all()]
 
         payload = {
-            'success': True,
+            'code': 200,
             'guilds': guilds
+        }
+
+    except AttributeError as e:
+        payload = {
+            'code': 404,
+            'errors': ['No guilds could be found', str(e)]
         }
 
     except Exception as error:
         payload = {
-            'success': False,
+            'code': 500,
             'errors': str(error)
         }
 
@@ -47,20 +54,21 @@ def resolve_guild(obj, info, guild_id):
         guild = Guild.query.filter_by(guild_id = guild_id).first()
 
         payload = {
-            'success': True,
+            'code': 200,
             'guild': guild.as_dict(),
         }
 
-    except AttributeError:
+    except AttributeError as e:
         payload = {
-            'success': False,
-            'errors': [f'Guild matching id {guild_id} cannot be found.']
+            'code': 404,
+            'errors': [f'Guild matching id {guild_id} cannot be found.', str(e)],
         }
 
-    except ValueError:
+    except ValueError as e:
         payload = {
-            'success': False,
-            'errors': [f'You stuck up, half-witted, scruffy-looking nerf herder! You provided me with incorrect data!']
+            'code': 400,
+            'errors': [f'You stuck up, half-witted, scruffy-looking nerf herder! You provided me with incorrect data!',
+                       str(e)],
         }
 
     return payload
@@ -80,27 +88,28 @@ def resolve_update_guild(obj, info, guild_id, **data):
         db.session.commit()
 
         payload = {
-            'success': True,
+            'code': 200,
             'success_msg': f'Guild matching id {guild_id} has been modified.',
             'guild': guild.as_dict()
         }
 
-    except AttributeError:
+    except AttributeError as e:
         payload = {
-            'success': False,
-            'errors': [f'Guild matching id {guild_id} was unable to be found.'],
+            'code': 404,
+            'errors': [f'Guild matching id {guild_id} was unable to be found.', str(e)],
         }
 
-    except ValueError:
+    except ValueError as e:
         payload = {
-            'success': False,
-            'errors': [f'You stuck up, half-witted, scruffy-looking nerf herder! You provided me with incorrect data!']
+            'code': 400,
+            'errors': [f'You stuck up, half-witted, scruffy-looking nerf herder! You provided me with incorrect data!',
+                       str(e)]
         }
 
-    except TypeError:
+    except TypeError as e:
         payload = {
-            'success': False,
-            'errors': ['Bot tried to do something obscene with an object.']
+            'code': 500,
+            'errors': ['Bot tried to do something obscene with an object.', str(e)]
         }
 
     return payload
@@ -114,14 +123,14 @@ def resolve_delete_guild(obj, info, guild_id):
         db.session.commit()
 
         payload = {
-            'success': True,
+            'code': 200,
             'success_msg': f'Guild matching id {guild_id} has successfully been deleted.',
         }
 
-    except AttributeError:
+    except AttributeError as e:
         payload = {
-            'success': False,
-            'errors': [f'Guild matching id {guild_id} could not be found.']
+            'code': 404,
+            'errors': [f'Guild matching id {guild_id} could not be found.', str(e)]
         }
 
     return payload

@@ -42,6 +42,6 @@ def server():
         context_value = request,
     )
 
-    status_code = 200 if success else 400
+    status_code = result['data'][list(result['data'].keys())[0]]['code']
 
     return jsonify(result), status_code
