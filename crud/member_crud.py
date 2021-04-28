@@ -77,7 +77,7 @@ def resolve_member(obj, info, member_id):
             'errors': [f'Member matching id {member_id} could not be found.', f'{e}'],
         }
 
-    return payload, 'member'
+    return payload
 
 
 def resolve_update_member(obj, info, member_id, **data):
