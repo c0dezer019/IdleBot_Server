@@ -44,4 +44,4 @@ def server():
 
     status_code = result['data'][list(result['data'].keys())[0]]['code']
 
-    return jsonify(result), status_code
+    return jsonify(result['data'][list(result['data'].keys())[0]]), status_code
