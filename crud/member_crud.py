@@ -86,7 +86,7 @@ def resolve_update_member(obj, info, member_id, **data):
 
         for k, v in data.items():
             if k == 'last_activity_ts':
-                v = get(v).to('US/Central').datetime
+                v = get(v).to('US/Central').datetime  # Converting isostring back into a datetime object with Arrow.
 
             setattr(member, k, v)
 
