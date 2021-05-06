@@ -6,6 +6,7 @@ schema {
 scalar BigInt
 scalar DateTime
 scalar Dict
+scalar List
 
 type Member {
     id: ID!
@@ -15,6 +16,8 @@ type Member {
     last_activity: String
     last_activity_loc: String
     last_activity_ts: DateTime
+    avg_idle_time: Int
+    idle_time_avgs: List
     status: String
     date_added: DateTime
 }
@@ -39,6 +42,8 @@ type Guild {
     last_activity: String
     last_activity_loc: String
     last_activity_ts: String
+    avg_idle_time: Int
+    idle_time_avgs: List
     status: String
     settings: Dict
     members: [Member!]
@@ -73,9 +78,11 @@ type DeleteResult {
 
 type Mutation {
     createGuild(guild_id: BigInt!, name: String!): GuildResult!
-    updateGuild(guild_id: BigInt!, name: String, last_activity: String, last_activity_loc: String, last_activity_ts: DateTime, status: String): GuildResult!
+    updateGuild(guild_id: BigInt!, name: String, last_activity: String, last_activity_loc: String,
+                last_activity_ts: DateTime, avg_idle_time: Int, idle_time_avgs: List, status: String): GuildResult!
     deleteGuild(guild_id: BigInt!): DeleteResult!
     createMember(guild_id: BigInt!, member_id: BigInt!, username: String!, nickname: String): MemberResult!
-    updateMember(member_id: BigInt!, nickname: String, last_activity: String, last_activity_loc: String, last_activity_ts: DateTime): MemberResult!
+    updateMember(member_id: BigInt!, nickname: String, last_activity: String, last_activity_loc: String,
+                 last_activity_ts: DateTime, avg_idle_time: Int, idle_time_avgs: List, status: String): MemberResult!
     deleteMember(member_id: BigInt!): DeleteResult!
 }

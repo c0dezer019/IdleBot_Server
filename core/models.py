@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ARRAY
 from typing import Callable
 from arrow import get, now
 
@@ -31,11 +32,13 @@ class Member(db.Model):
     id = db.Column(db.Integer, primary_key = True, nullable = False)
     member_id = db.Column(db.BigInteger, nullable = False, unique = True)
     username = db.Column(db.String, nullable = False, unique = True)
-    nickname = db.Column(db.String, nullable = True, unique = False)
+    nickname = db.Column(db.String)
     admin_access = db.Column(db.Boolean, default = False)
     last_activity = db.Column(db.String, server_default = 'None')
     last_activity_loc = db.Column(db.String, server_default = 'None')
     last_activity_ts = db.Column(db.DateTime(timezone = True), default = get(datetime(1970, 1, 1, 0, 0)).datetime)
+    avg_idle_time = db.Column(db.Integer, default = 0)
+    idle_time_avgs = db.Column(ARRAY(db.Integer), default = [])
     # Overall Discord status. Not representative of individual servers.
     status = db.Column(db.String, nullable = False, server_default = 'new')
     date_added = db.Column(db.DateTime(timezone = True), default = now('US/Central').datetime)
@@ -66,8 +69,10 @@ class Guild(db.Model):
     last_activity = db.Column(db.String, server_default = 'None')
     last_activity_loc = db.Column(db.String, server_default = 'None')
     last_activity_ts = db.Column(db.DateTime(timezone = True), default = get(datetime(1970, 1, 1, 0, 0)).datetime)
+    avg_idle_time = db.Column(db.Integer, nullable = True, default = 0)
+    idle_time_avgs = db.Column(ARRAY(db.Integer), default = [])
     status = db.Column(db.String, nullable = False, server_default = 'new')
-    settings = db.Column(db.JSON, default = { })
+    settings = db.Column(db.JSON, default = {})
     members = db.relationship(Member, secondary = member_guild_association, lazy = 'joined',
                               backref = db.backref('guilds', lazy = True))
     date_added = db.Column(db.DateTime(timezone = True), default = now('US/Central').datetime)
