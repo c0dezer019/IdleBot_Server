@@ -35,7 +35,6 @@ def playground():
 @bot.route('/graphql', methods=['POST', 'GET', 'PATCH', 'DELETE'])
 def server():
     data = request.get_json()
-
     success, result = graphql_sync(
         schema,
         data,
