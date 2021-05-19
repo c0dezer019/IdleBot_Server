@@ -1,22 +1,9 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ARRAY
-from typing import Callable
 from arrow import get, now
 
-
-class PSQLAlchemy(SQLAlchemy):
-    Column: Callable
-    Integer: Callable
-    String: Callable
-    DateTime: Callable
-    Table: Callable
-    ForeignKey: Callable
-    relationship: Callable
-    backref: Callable
-
-
-db = PSQLAlchemy()
+db = SQLAlchemy()
 
 member_guild_association = db.Table(
     'associationTable',
@@ -35,9 +22,11 @@ class Member(db.Model):
     nickname = db.Column(db.String)
     admin_access = db.Column(db.Boolean, default = False)
     last_activity = db.Column(db.String, server_default = 'None')
-    last_activity_loc = db.Column(db.String, server_default = 'None')
+    last_activity_loc = db.Column(db.BigInteger, default = 0)
     last_activity_ts = db.Column(db.DateTime(timezone = True), default = get(datetime(1970, 1, 1, 0, 0)).datetime)
-    avg_idle_time = db.Column(db.Integer, default = 0)
+    idle_times = db.Column(ARRAY(db.Integer), default = [])
+    # Instant avg like an instant MPG in the car.
+    idle_time_avg = db.Column(db.Integer, default = 0)
     idle_time_avgs = db.Column(ARRAY(db.Integer), default = [])
     # Overall Discord status. Not representative of individual servers.
     status = db.Column(db.String, nullable = False, server_default = 'new')
@@ -67,9 +56,10 @@ class Guild(db.Model):
     guild_id = db.Column(db.BigInteger, nullable = False, unique = True)
     name = db.Column(db.String, nullable = False)
     last_activity = db.Column(db.String, server_default = 'None')
-    last_activity_loc = db.Column(db.String, server_default = 'None')
+    last_activity_loc = db.Column(db.BigInteger, default = 0)
     last_activity_ts = db.Column(db.DateTime(timezone = True), default = get(datetime(1970, 1, 1, 0, 0)).datetime)
-    avg_idle_time = db.Column(db.Integer, nullable = True, default = 0)
+    idle_times = db.Column(ARRAY(db.Integer), default = [])
+    idle_time_avg = db.Column(db.Integer, nullable = True, default = 0)
     idle_time_avgs = db.Column(ARRAY(db.Integer), default = [])
     status = db.Column(db.String, nullable = False, server_default = 'new')
     settings = db.Column(db.JSON, default = {})
@@ -80,7 +70,8 @@ class Guild(db.Model):
     def __repr__(self):
         return f'<Guild (id = {self.id}, guild_id = {self.guild_id},  name = {self.name}, ' \
                f'last_activity = {self.last_activity}, last_activity_loc = {self.last_activity_loc}, ' \
-               f'last_activity_ts = {self.last_activity_ts}, status = {self.status}, settings = {self.settings}, ' \
+               f'last_activity_ts = {self.last_activity_ts}, avg_idle_time = {self.avg_idle_time}, ' \
+               f'idle_time_avgs = {self.idle_time_avgs}, status = {self.status}, settings = {self.settings}, ' \
                f'members = {self.members}, date_added = {self.date_added.isoformat()})>'
 
     def as_dict(self):
