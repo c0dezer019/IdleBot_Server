@@ -81,11 +81,11 @@ type DeleteResult {
 
 type Mutation {
     createGuild(guild_id: BigInt!, name: String!): GuildResult!
-    updateGuild(guild_id: BigInt!, name: String, last_activity: String, last_activity_loc: String,
+    updateGuild(guild_id: BigInt!, name: String, last_activity: String, last_activity_loc: BigInt,
                 last_activity_ts: DateTime, idle_times: List, idle_time_avg: Int, idle_time_avgs: List, status: String): GuildResult!
     deleteGuild(guild_id: BigInt!): DeleteResult!
     createMember(guild_id: BigInt!, member_id: BigInt!, username: String!, nickname: String): MemberResult!
-    updateMember(member_id: BigInt!, nickname: String, last_activity: String, last_activity_loc: String,
+    updateMember(member_id: BigInt!, nickname: String, admin_access: Boolean, last_activity: String, last_activity_loc: BigInt,
                  last_activity_ts: DateTime, idle_times: List, idle_time_avg: Int, idle_time_avgs: List, status: String): MemberResult!
     deleteMember(member_id: BigInt!): DeleteResult!
 }
