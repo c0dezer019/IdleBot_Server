@@ -15,11 +15,12 @@ type Member {
     nickname: String
     admin_access: Boolean!
     last_activity: String
-    last_activity_loc: BigInt
-    last_activity_ts: DateTime
+    last_active_server: BigInt
+    last_active_channel: BigInt
+    last_active_ts: DateTime
     idle_times: List
-    idle_time_avg: Int
-    idle_time_avgs: List
+    avg_idle_time: Int
+    recent_avgs: List
     status: String
     date_added: DateTime
 }
@@ -42,11 +43,11 @@ type Guild {
     guild_id: BigInt!
     name: String!
     last_activity: String
-    last_activity_loc: BigInt
-    last_activity_ts: String
+    last_active_channel: BigInt
+    last_active_ts: String
     idle_times: List
-    idle_time_avg: Int
-    idle_time_avgs: List
+    avg_idle_time: Int
+    recent_avgs: List
     status: String
     settings: Dict
     members: [Member!]
@@ -81,11 +82,40 @@ type DeleteResult {
 
 type Mutation {
     createGuild(guild_id: BigInt!, name: String!): GuildResult!
-    updateGuild(guild_id: BigInt!, name: String, last_activity: String, last_activity_loc: BigInt,
-                last_activity_ts: DateTime, idle_times: List, idle_time_avg: Int, idle_time_avgs: List, status: String): GuildResult!
+    updateGuild(
+        guild_id: BigInt!,
+        name: String,
+        last_activity: String,
+        last_active_channel: BigInt,
+        last_active_ts: DateTime,
+        idle_times: List,
+        avg_idle_time: Int,
+        recent_avgs:List,
+        status: String
+    ): GuildResult!
+
     deleteGuild(guild_id: BigInt!): DeleteResult!
-    createMember(guild_id: BigInt!, member_id: BigInt!, username: String!, nickname: String): MemberResult!
-    updateMember(member_id: BigInt!, nickname: String, admin_access: Boolean, last_activity: String, last_activity_loc: BigInt,
-                 last_activity_ts: DateTime, idle_times: List, idle_time_avg: Int, idle_time_avgs: List, status: String): MemberResult!
+    createMember(
+        guild_id: BigInt!,
+        member_id: BigInt!,
+        username: String!,
+        user_tag: Int!,
+        nickname: String
+    ): MemberResult!
+
+    updateMember(
+        member_id: BigInt!,
+        nickname: String,
+        admin_access: Boolean,
+        last_activity: String,
+        last_active_server: BigInt,
+        last_active_channel: BigInt,
+        last_active_ts: DateTime,
+        idle_times: List,
+        avg_idle_time: Int,
+        recent_avgs: List,
+        status: String
+    ): MemberResult!
+
     deleteMember(member_id: BigInt!): DeleteResult!
 }
