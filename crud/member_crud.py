@@ -3,7 +3,7 @@ from core.models import db
 from core.models import Member, Guild
 
 
-def resolve_create_member(obj, info, guild_id, **data):
+def resolve_create_member(guild_id, **data):
     try:
         guild = Guild.query.filter_by(guild_id = guild_id).first()
         member = Member(**data)
@@ -38,7 +38,7 @@ def resolve_create_member(obj, info, guild_id, **data):
     return payload
 
 
-def resolve_members(obj, info):
+def resolve_members():
     try:
         members = [member.as_dict() for member in Member.query.all()]
 
@@ -62,7 +62,7 @@ def resolve_members(obj, info):
     return payload
 
 
-def resolve_member(obj, info, member_id):
+def resolve_member(member_id):
     try:
         member = Member.query.filter_by(member_id = member_id).first()
 
@@ -80,7 +80,7 @@ def resolve_member(obj, info, member_id):
     return payload
 
 
-def resolve_update_member(obj, info, member_id, **data):
+def resolve_update_member(member_id, **data):
     try:
         member = Member.query.filter_by(member_id = member_id).first()
 
@@ -119,7 +119,7 @@ def resolve_update_member(obj, info, member_id, **data):
     return payload
 
 
-def resolve_delete_member(obj, info, member_id):
+def resolve_delete_member(member_id):
     try:
         member = Member.query.filter_by(member_id = member_id).first()
 
